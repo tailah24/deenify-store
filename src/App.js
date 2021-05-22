@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import Homepage from './pages/homepage'
 import ShopPage from './pages/shop-page/shop.js'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import Header from './component/Header/header.js'
 import UserAccount from './pages/Account/userAccount';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils.js'
@@ -53,22 +53,22 @@ render() {
       <Switch>
       <Route exact path='/' component={Homepage}/>
       <Route path='/shop' component={ShopPage}/>
-      <Route path='/signin' component={UserAccount}/>
+      <Route exact path='/signin'  render = {() => this.props.currentUser ? ( <Redirect to='/' />) : ( <UserAccount />) }/>
       </Switch>
     </div>
   );
 }
 }
 
-// const mapStateToProps = createStructuredSelector({
-//   currentUser: selectCurrentUser
-// });
+const mapStateToProps = ({ user }) => ({
+  currentUser : user.currentUser
+})
 
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user))
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(App)
